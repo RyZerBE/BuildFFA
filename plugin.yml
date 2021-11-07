@@ -1,0 +1,11 @@
+name: BuildFFA
+author: BauboLP
+version: 1.0
+api: 3.0.0
+description: BuildFFA for RyZerBE
+main: BauboLP\BuildFFA\BuildFFA
+load: POSTWORLD
+
+permissions:
+  bffa.forcevote:
+    default: op
