@@ -13,6 +13,7 @@ use BauboLP\NPCSystem\entity\NPC;
 use pocketmine\entity\Entity;
 use pocketmine\entity\object\ItemEntity;
 use pocketmine\entity\object\PrimedTNT;
+use pocketmine\entity\projectile\EnderPearl;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener;
@@ -107,6 +108,12 @@ class DamageListener implements Listener
                             $obj->teleportToSpawn();
                             $obj->giveItems();
                             $entity->sendMessage(BuildFFA::Prefix . LanguageProvider::getMessageContainer('bffa-killed-by-player', $entity->getName(), ['#killer' => $kobj->getName()]));
+
+                            foreach($entity->getLevel()->getEntities() as $__entity) {
+                                if(!$__entity instanceof EnderPearl && !$__entity instanceof \baubolp\core\entity\EnderPearl) continue;
+                                if($__entity?->getOwningEntityId() === $entity->getId()) $__entity->flagForDespawn();
+                            }
+
                             $obj->resetKiller();
                             $obj->addDeath();
                             $kobj->addKill();
@@ -160,6 +167,10 @@ class DamageListener implements Listener
                     }
                 }
 
+                foreach($entity->getLevel()->getEntities() as $__entity) {
+                    if(!$__entity instanceof EnderPearl && !$__entity instanceof \baubolp\core\entity\EnderPearl) continue;
+                    if($__entity?->getOwningEntityId() === $entity->getId()) $__entity->flagForDespawn();
+                }
                 $obj->setCooldown('ep', null);
                 $obj->setCooldown('rp', null);
                 $obj->resetKillStreak();
