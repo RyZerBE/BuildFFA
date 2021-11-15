@@ -13,7 +13,7 @@ use BauboLP\BuildFFA\forms\voting\SkipConfirmForm;
 use BauboLP\BuildFFA\tasks\AnimationTask;
 use BauboLP\BuildFFA\utils\Kits;
 use BauboLP\BW\API\GameAPI;
-use baubolp\core\provider\LanguageProvider;
+use ryzerbe\core\language\LanguageProvider;
 use pocketmine\block\Block;
 use pocketmine\item\Item;
 use pocketmine\level\sound\EndermanTeleportSound;

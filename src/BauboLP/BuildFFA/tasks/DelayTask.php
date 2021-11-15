@@ -6,7 +6,7 @@ namespace BauboLP\BuildFFA\tasks;
 
 use BauboLP\BuildFFA\BuildFFA;
 use BauboLP\BuildFFA\provider\GameProvider;
-use baubolp\core\provider\LanguageProvider;
+use ryzerbe\core\language\LanguageProvider;
 use pocketmine\block\Block;
 use pocketmine\entity\object\ItemEntity;
 use pocketmine\event\entity\EntityDamageEvent;

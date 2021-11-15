@@ -6,10 +6,7 @@ namespace BauboLP\BuildFFA\events;
 
 use BauboLP\BuildFFA\BuildFFA;
 use BauboLP\BuildFFA\provider\GameProvider;
-use BauboLP\BW\API\GameAPI;
-use baubolp\core\provider\LanguageProvider;
-use baubolp\core\player\CorePlayer;
-use BauboLP\NPCSystem\entity\NPC;
+use ryzerbe\core\language\LanguageProvider;
 use pocketmine\entity\Entity;
 use pocketmine\entity\object\ItemEntity;
 use pocketmine\entity\object\PrimedTNT;
@@ -23,6 +20,7 @@ use pocketmine\math\Vector3;
 use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
+use ryzerbe\core\player\PMMPPlayer;
 
 class DamageListener implements Listener
 {
@@ -49,7 +47,7 @@ class DamageListener implements Listener
                 return;
             }
             if($entity instanceof Player && $killer instanceof Player && !$event->isCancelled()) {
-                if ($killer instanceof CorePlayer) {
+                if ($killer instanceof PMMPPlayer) {
                     $killerName = $killer->getName();
                     if (($obj = GameProvider::getBuildFFAPlayer($entity->getName())) != null && ($kobj = GameProvider::getBuildFFAPlayer($killer->getName())) != null) {
                         $obj->setKiller($killer->getName());
@@ -110,7 +108,7 @@ class DamageListener implements Listener
                             $entity->sendMessage(BuildFFA::Prefix . LanguageProvider::getMessageContainer('bffa-killed-by-player', $entity->getName(), ['#killer' => $kobj->getName()]));
 
                             foreach($entity->getLevel()->getEntities() as $__entity) {
-                                if(!$__entity instanceof EnderPearl && !$__entity instanceof \baubolp\core\entity\EnderPearl) continue;
+                                if(!$__entity instanceof EnderPearl && !$__entity instanceof \ryzerbe\core\entity\EnderPearl) continue;
                                 if($__entity?->getOwningEntityId() === $entity->getId()) $__entity->flagForDespawn();
                             }
 
@@ -168,7 +166,7 @@ class DamageListener implements Listener
                 }
 
                 foreach($entity->getLevel()->getEntities() as $__entity) {
-                    if(!$__entity instanceof EnderPearl && !$__entity instanceof \baubolp\core\entity\EnderPearl) continue;
+                    if(!$__entity instanceof EnderPearl && !$__entity instanceof \ryzerbe\core\entity\EnderPearl) continue;
                     if($__entity?->getOwningEntityId() === $entity->getId()) $__entity->flagForDespawn();
                 }
                 $obj->setCooldown('ep', null);

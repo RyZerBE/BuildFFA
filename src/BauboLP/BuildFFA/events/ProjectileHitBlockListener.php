@@ -14,7 +14,7 @@ class ProjectileHitBlockListener implements Listener
     public function hitBlock(ProjectileHitBlockEvent $event)
     {
         $entity = $event->getEntity();
-        if ($entity instanceof Arrow || $entity instanceof \baubolp\core\entity\Arrow) {
+        if ($entity instanceof Arrow || $entity instanceof \ryzerbe\core\entity\Arrow) {
             $entity->kill();
         }
     }

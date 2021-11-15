@@ -9,7 +9,7 @@ use BauboLP\BuildFFA\provider\GameProvider;
 use BauboLP\BuildFFA\provider\ItemProvider;
 use BauboLP\BuildFFA\utils\BuildFFAPlayer;
 use BauboLP\BuildFFA\utils\Kits;
-use baubolp\core\provider\LanguageProvider;
+use ryzerbe\core\language\LanguageProvider;
 use muqsit\invmenu\InvMenu;
 use muqsit\invmenu\transaction\InvMenuTransaction;
 use muqsit\invmenu\transaction\InvMenuTransactionResult;

@@ -18,7 +18,7 @@ class ProjectileShootListener implements Listener
     public function shoot(ProjectileLaunchEvent $event)
     {
         $entity = $event->getEntity();
-        if($entity instanceof EnderPearl || $entity instanceof \baubolp\core\entity\EnderPearl) {
+        if($entity instanceof EnderPearl || $entity instanceof \ryzerbe\core\entity\EnderPearl) {
             $shooter = $entity->getOwningEntity();
             if($shooter instanceof Player) {
                 if(($obj = GameProvider::getBuildFFAPlayer($shooter->getName())) != null) {

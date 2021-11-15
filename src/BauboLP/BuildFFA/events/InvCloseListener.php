@@ -7,7 +7,7 @@ namespace BauboLP\BuildFFA\events;
 use BauboLP\BuildFFA\BuildFFA;
 use BauboLP\BuildFFA\provider\GameProvider;
 use BauboLP\BuildFFA\utils\Kits;
-use BauboLP\Core\Provider\LanguageProvider;
+use ryzerbe\core\language\LanguageProvider;
 use muqsit\invmenu\inventories\BaseFakeInventory;
 use pocketmine\event\inventory\InventoryCloseEvent;
 use pocketmine\event\Listener;

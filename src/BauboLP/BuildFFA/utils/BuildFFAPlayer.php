@@ -7,15 +7,14 @@ namespace BauboLP\BuildFFA\utils;
 use BauboLP\BuildFFA\BuildFFA;
 use BauboLP\BuildFFA\provider\GameProvider;
 use BauboLP\BuildFFA\provider\ItemProvider;
-use baubolp\core\player\RyzerPlayerProvider;
-use baubolp\core\provider\LanguageProvider;
-use pocketmine\item\Durable;
+use ryzerbe\core\language\LanguageProvider;
 use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\Item;
 use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
+use ryzerbe\core\player\RyZerPlayerProvider;
 
 class BuildFFAPlayer
 {
@@ -113,8 +112,7 @@ class BuildFFAPlayer
 
     public function checkKillStreak(): void
     {
-        $streaks = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 135, 140, 145, 150];
-        if(in_array($this->killStreak, $streaks)) {
+        if($this->killStreak % 5 === 0 && $this->killStreak != 0) {
             $name = $this->getPlayer()->getName();
             foreach (Server::getInstance()->getOnlinePlayers() as $player) {
                 $player->sendActionBarMessage(BuildFFA::Prefix.LanguageProvider::getMessageContainer('bffa-player-killstreak', $player->getName(), ['#playername' => $name, '#streak' => $this->killStreak]));
@@ -506,8 +504,8 @@ class BuildFFAPlayer
      */
     public function getName(): string
     {
-        if(($obj = RyzerPlayerProvider::getRyzerPlayer($this->getPlayer()->getName())) != null)
-            return $obj->getName();
+        if(($obj = RyZerPlayerProvider::getRyzerPlayer($this->getPlayer()->getName())) != null)
+            return $obj->getName(true);
 
         return $this->getPlayer()->getName();
     }

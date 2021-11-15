@@ -7,7 +7,7 @@ namespace BauboLP\BuildFFA\commands;
 use BauboLP\BuildFFA\BuildFFA;
 use BauboLP\BuildFFA\forms\invsort\InvSortMenu;
 use BauboLP\BuildFFA\provider\GameProvider;
-use baubolp\core\provider\LanguageProvider;
+use ryzerbe\core\language\LanguageProvider;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;

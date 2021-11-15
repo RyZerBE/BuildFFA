@@ -7,7 +7,7 @@ namespace BauboLP\BuildFFA\forms\voting;
 use BauboLP\BuildFFA\BuildFFA;
 use BauboLP\BuildFFA\provider\GameProvider;
 use BauboLP\BuildFFA\provider\ItemProvider;
-use baubolp\core\provider\LanguageProvider;
+use ryzerbe\core\language\LanguageProvider;
 use pocketmine\form\MenuForm;
 use pocketmine\form\MenuOption;
 use pocketmine\Player;

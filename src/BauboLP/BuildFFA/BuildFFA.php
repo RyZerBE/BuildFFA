@@ -21,8 +21,8 @@ use BauboLP\BuildFFA\events\ProjectileShootListener;
 use BauboLP\BuildFFA\tasks\AnimationTask;
 use BauboLP\BuildFFA\tasks\DelayTask;
 use BauboLP\BuildFFA\tasks\GameTask;
-use baubolp\core\provider\AsyncExecutor;
-use baubolp\core\provider\VIPJoinProvider;
+use ryzerbe\core\provider\VIPJoinProvider;
+use ryzerbe\core\util\async\AsyncExecutor;
 use muqsit\invmenu\InvMenuHandler;
 use pocketmine\plugin\PluginBase;
 use pocketmine\Server;
@@ -59,9 +59,8 @@ class BuildFFA extends PluginBase
         $this->getScheduler()->scheduleRepeatingTask(new AnimationTask(), 1);
         $this->getServer()->getCommandMap()->register('inv', new InvSortCommand());
         $this->getServer()->getCommandMap()->register('forcevote', new ForceVotingCommand());
-        VIPJoinProvider::activate();
-        VIPJoinProvider::activateChecks();
-        VIPJoinProvider::setPlayers(30);
+
+        VIPJoinProvider::enable(30);
         AsyncExecutor::submitMySQLAsyncTask("BuildFFA", function (\mysqli $mysqli) {
             $mysqli->query("CREATE TABLE IF NOT EXISTS inventories(id INTEGER NOT NULL KEY AUTO_INCREMENT, playername varchar(32) NOT NULL, sort TEXT NOT NULL)");
         });

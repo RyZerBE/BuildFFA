@@ -7,7 +7,7 @@ namespace BauboLP\BuildFFA\tasks;
 use BauboLP\BuildFFA\BuildFFA;
 use BauboLP\BuildFFA\provider\GameProvider;
 use BauboLP\BuildFFA\provider\ItemProvider;
-use baubolp\core\provider\LanguageProvider;
+use ryzerbe\core\language\LanguageProvider;
 use BauboLP\NPCSystem\entity\NPC;
 use BauboLP\NPCSystem\NPCSystem;
 use pocketmine\event\entity\EntityDamageEvent;
@@ -211,18 +211,6 @@ class GameTask extends Task
                         }
                     }
                 }
-            }
-            $level = Server::getInstance()->getLevelByName(GameProvider::getMap());
-            if($level->getEntity(BuildFFA::getPlugin()->npcId) == null) {
-                foreach ($level->getEntities() as $entity) {
-                    if($entity instanceof NPC)
-                        $entity->kill();
-                }
-
-                $vec = $level->getSafeSpawn()->asVector3();
-                $npc = NPCSystem::createNPC(new Position($vec->x +2, $vec->y-0.5, $vec->z, $level), NPCSystem::defaultSkin("PerkDealer.png"), ["ALL"], TextFormat::GREEN.TextFormat::BOLD."Inventory" . "\n" . TextFormat::GRAY."Sort your inventory");
-                $npc->allowLookToPlayer();
-                BuildFFA::getPlugin()->npcId = $npc->getId();
             }
         }else {
             foreach (Server::getInstance()->getOnlinePlayers() as $player) {

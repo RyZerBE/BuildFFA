@@ -7,7 +7,7 @@ namespace BauboLP\BuildFFA\forms\voting;
 use BauboLP\BuildFFA\BuildFFA;
 use BauboLP\BuildFFA\provider\GameProvider;
 use BauboLP\BuildFFA\provider\ItemProvider;
-use baubolp\core\provider\LanguageProvider;
+use ryzerbe\core\language\LanguageProvider;
 use pocketmine\form\ModalForm;
 use pocketmine\level\sound\EndermanTeleportSound;
 use pocketmine\Player;
