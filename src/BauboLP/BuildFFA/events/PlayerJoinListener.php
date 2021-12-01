@@ -38,21 +38,23 @@ class PlayerJoinListener implements Listener
             AsyncExecutor::submitMySQLAsyncTask("BuildFFA", function (\mysqli $mysqli) use ($playerName, $defSort) {
                 $res = $mysqli->query("SELECT * FROM inventories WHERE playername='$playerName'");
                 if($res->num_rows > 0) {
-                    while($data = $res->fetch_assoc())
-                        return $data["sort"];
+                    if($data = $res->fetch_assoc()) return $data["sort"];
                 }else {
                     $mysqli->query("INSERT INTO inventories(`playername`, `sort`) VALUES ('$playerName', '$defSort')");
                 }
                 return null;
             }, function (Server $server, $result) use ($playerName) {
-                if($result === null) return;
+                $bffaPlayer = GameProvider::getBuildFFAPlayer($playerName);
+                if($result === null){
+                    $bffaPlayer->giveItems();
+                    $bffaPlayer->getPlayer()->playSound('random.levelup', 5.0, 1.0, [$obj->getPlayer()]);
+                    return;
+                };
 
                 $sortArray = (array) unserialize(zlib_decode(base64_decode($result)));
-                if(($obj = GameProvider::getBuildFFAPlayer($playerName)) != null) {
-                    $obj->setInvSorts($sortArray);
-                    $obj->giveItems();
-                    $obj->getPlayer()->playSound('random.levelup', 5.0, 1.0, [$obj->getPlayer()]);
-                }
+                $bffaPlayer->setInvSorts($sortArray);
+                $bffaPlayer->giveItems();
+                $bffaPlayer->getPlayer()->playSound('random.levelup', 5.0, 1.0, [$bffaPlayer->getPlayer()]);
             });
         }
         $player->updateScoreboard();
