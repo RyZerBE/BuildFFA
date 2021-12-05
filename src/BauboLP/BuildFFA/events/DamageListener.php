@@ -6,6 +6,7 @@ namespace BauboLP\BuildFFA\events;
 
 use BauboLP\BuildFFA\BuildFFA;
 use BauboLP\BuildFFA\provider\GameProvider;
+use pocketmine\block\BlockIds;
 use ryzerbe\core\language\LanguageProvider;
 use pocketmine\entity\Entity;
 use pocketmine\entity\object\ItemEntity;
@@ -134,6 +135,7 @@ class DamageListener implements Listener
         }
 
         $cause = $event->getCause();
+        /** @var PMMPPlayer $entity */
         $entity = $event->getEntity();
 
         if(!$entity instanceof Player) {
@@ -141,7 +143,7 @@ class DamageListener implements Listener
             return;
         }
 
-        if($cause === EntityDamageEvent::CAUSE_SUFFOCATION || $cause === EntityDamageEvent::CAUSE_DROWNING || $cause === EntityDamageEvent::CAUSE_FIRE || $cause === EntityDamageEvent::CAUSE_FALL || $cause === EntityDamageEvent::CAUSE_FIRE_TICK || $cause === EntityDamageEvent::CAUSE_ENTITY_EXPLOSION) {
+        if($cause === EntityDamageEvent::CAUSE_DROWNING || $cause === EntityDamageEvent::CAUSE_FIRE || $cause === EntityDamageEvent::CAUSE_FALL || $cause === EntityDamageEvent::CAUSE_FIRE_TICK || $cause === EntityDamageEvent::CAUSE_ENTITY_EXPLOSION) {
             $event->setCancelled();
         }else if($cause === EntityDamageEvent::CAUSE_VOID) {
             $event->setCancelled();
@@ -178,6 +180,20 @@ class DamageListener implements Listener
                 $obj->addDeath();
                 $obj->updateScoreboard();
                 $obj->getPlayer()->setHealth(20);
+            }
+        }else if($cause === EntityDamageEvent::CAUSE_SUFFOCATION) {
+            if(!$entity->getServer()->isLevelLoaded(GameProvider::getMap()) || $entity->isSpectator()) {
+                $event->setCancelled();
+                return;
+            }
+            $level = $entity->getServer()->getLevelByName(GameProvider::getMap());
+            for($i = 0; $i < 50; $i++) {
+                $pos = $entity->asPosition()->add(0, $i);
+                $pos2 = $entity->asPosition()->add(0, $i + 1);
+                if($level->getBlock($pos)->getId() === BlockIds::AIR && $level->getBlock($pos2)->getId() === BlockIds::AIR) {
+                    $entity->teleport($pos2);
+                    break;
+                }
             }
         }
     }

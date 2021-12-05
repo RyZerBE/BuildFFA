@@ -6,6 +6,7 @@ namespace BauboLP\BuildFFA;
 
 use BauboLP\BuildFFA\commands\ForceVotingCommand;
 use BauboLP\BuildFFA\commands\InvSortCommand;
+use BauboLP\BuildFFA\commands\SkipCommand;
 use BauboLP\BuildFFA\events\BlockBreakListener;
 use BauboLP\BuildFFA\events\BlockPlaceListener;
 use BauboLP\BuildFFA\events\BlockUpdateListener;
@@ -37,7 +38,7 @@ class BuildFFA extends PluginBase
     /** @var int  */
     public $npcId = -1;
     /** @var bool  */
-    public static $teaming = true;
+    public static $teaming = false;
 
     public function onEnable()
     {
@@ -59,6 +60,7 @@ class BuildFFA extends PluginBase
         $this->getScheduler()->scheduleRepeatingTask(new AnimationTask(), 1);
         $this->getServer()->getCommandMap()->register('inv', new InvSortCommand());
         $this->getServer()->getCommandMap()->register('forcevote', new ForceVotingCommand());
+        $this->getServer()->getCommandMap()->register('skip', new SkipCommand());
 
         VIPJoinProvider::enable(30);
         AsyncExecutor::submitMySQLAsyncTask("BuildFFA", function (\mysqli $mysqli) {
