@@ -28,9 +28,9 @@ class BlockPlaceListener implements Listener
             return;
         }
         if($block->getId() == Block::RED_SANDSTONE) {
-            AnimationProvider::addActiveAnimation(new BlockAnimation($block, $event->getPlayer()->getName()));
+            AnimationProvider::addActiveAnimation(new BlockAnimation($block->asVector3(), $event->getPlayer()->getName()));
         }else if($block->getId() == Block::WEB) {
-            AnimationProvider::addActiveAnimation(new WebAnimation($block, $event->getPlayer()->getName()));
+            AnimationProvider::addActiveAnimation(new WebAnimation($block->asVector3(), $event->getPlayer()->getName()));
         }else if($block->getId() == Block::TNT) {
             $pos = $block->asVector3();
             $event->setCancelled();

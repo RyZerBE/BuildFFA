@@ -4,17 +4,19 @@
 namespace BauboLP\BuildFFA\animation;
 
 
+use function uniqid;
+
 abstract class Animation
 {
     /** @var int  */
-    private $ticks = 0;
+    private int $ticks = 0;
 
-    /** @var int */
-    private $id;
+    /** @var string */
+    private string $id;
 
     public function __construct()
     {
-        $this->id = rand(1, 20000);
+        $this->id = uniqid();
     }
 
     public function tick() {
@@ -30,9 +32,9 @@ abstract class Animation
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getAnimationId(): int
+    public function getAnimationId(): string
     {
         return $this->id;
     }

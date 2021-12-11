@@ -9,6 +9,7 @@ use BauboLP\BuildFFA\provider\GameProvider;
 use pocketmine\block\Block;
 use pocketmine\item\Item;
 use pocketmine\level\particle\DestroyBlockParticle;
+use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\LevelEventPacket;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
@@ -16,14 +17,14 @@ use pocketmine\utils\TextFormat;
 class WebAnimation extends Animation
 {
     /** @var string */
-    private $playerName;
-    /** @var Block */
-    private $block;
+    private string $playerName;
+    /** @var Vector3 */
+    private Vector3 $blockPos;
 
-    public function __construct(Block $block, string $playerName)
+    public function __construct(Vector3 $blockPos, string $playerName)
     {
         $this->playerName = $playerName;
-        $this->block = $block;
+        $this->blockPos = $blockPos;
         parent::__construct();
     }
 
@@ -33,10 +34,10 @@ class WebAnimation extends Animation
             $level = Server::getInstance()->getLevelByName(GameProvider::getMap());
             if (!Server::getInstance()->isLevelLoaded(GameProvider::getMap())) return;
 
-            $block = $level->getBlock($this->block->asVector3());
+            $block = $level->getBlock($this->blockPos);
             if ($block->getId() === Block::SANDSTONE) return;
-                $level->setBlock($this->block->asVector3(), Block::get(Block::AIR));
-                $level->addParticle(new DestroyBlockParticle($this->block->asVector3(), Block::get(Block::WEB)));
+                $level->setBlock($this->blockPos, Block::get(Block::AIR));
+                $level->addParticle(new DestroyBlockParticle($this->blockPos, Block::get(Block::WEB)));
 
 
             if (!GameProvider::isVoting()) {
@@ -58,7 +59,7 @@ class WebAnimation extends Animation
         if($this->getCurrentTick() === 0) {
             $pk = new LevelEventPacket();
             $pk->evid = LevelEventPacket::EVENT_BLOCK_START_BREAK;
-            $pk->position = $this->block->asVector3();
+            $pk->position = $this->blockPos;
             $pk->data = (int)round(65535 / 100);
             Server::getInstance()->broadcastPacket(Server::getInstance()->getOnlinePlayers(), $pk);
         }

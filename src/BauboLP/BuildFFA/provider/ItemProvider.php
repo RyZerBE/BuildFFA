@@ -91,7 +91,6 @@ class ItemProvider extends Kits
             case Item::BLAZE_ROD:
                 $level = Server::getInstance()->getLevelByName(GameProvider::getMap());
                 if($level->getBlock($player->getSide(0))->getId() != Block::AIR || $level->getBlock(new Vector3($player->x, $player->y-2, $player->z))->getId() != Block::AIR) {
-                    #$player->sendMessage(BuildFFA::Prefix.LanguageProvider::getMessageContainer('rettungsplattform-cant-place-block', $player->getName()));
                     $player->resetItemCooldown($player->getInventory()->getItemInHand(), 10);
                     return;
                 }
@@ -217,7 +216,7 @@ class ItemProvider extends Kits
                     $blocks[] = $level->getBlock($pos);;
                 }
                 foreach ($blocks as $block)
-                    AnimationProvider::addActiveAnimation(new BlockAnimation($block, "PimmelBerger"));
+                    AnimationProvider::addActiveAnimation(new BlockAnimation($block->asVector3(), "PimmelBerger"));
 
 
                 if(($obj = GameProvider::getBuildFFAPlayer($player->getName())) != null) {
