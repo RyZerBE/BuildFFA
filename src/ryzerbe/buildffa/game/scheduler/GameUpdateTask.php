@@ -13,6 +13,7 @@ use ryzerbe\buildffa\player\BuildFFAPlayerManager;
 use ryzerbe\core\language\LanguageProvider;
 use ryzerbe\core\util\customitem\CustomItemManager;
 use ryzerbe\core\util\time\TimeFormat;
+use function count;
 use function floor;
 
 class GameUpdateTask extends Task {
@@ -22,11 +23,13 @@ class GameUpdateTask extends Task {
         }
         GameManager::removeEntries($currentTick);
 
-        if(--GameManager::$mapChangeTimer <= 0) {
-            GameManager::resetEntries();
-            GameManager::setKit(GameManager::getTopKit());
-            GameManager::setMap(GameManager::getTopMap());
-            GameManager::$mapChangeTimer = GameManager::DEFAULT_MAP_CHANGE_DELAY;
+        if(count(BuildFFAPlayerManager::getPlayers()) > 0) {
+            if(--GameManager::$mapChangeTimer <= 0) {
+                GameManager::resetEntries();
+                GameManager::setKit(GameManager::getTopKit());
+                GameManager::setMap(GameManager::getTopMap());
+                GameManager::$mapChangeTimer = GameManager::DEFAULT_MAP_CHANGE_DELAY;
+            }
         }
 
         if(GameManager::$mapChangeTimer % 20 === 0) {
