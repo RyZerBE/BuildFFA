@@ -9,6 +9,7 @@ use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener;
 use pocketmine\Player;
 use ryzerbe\buildffa\game\GameManager;
+use ryzerbe\buildffa\player\BuildFFAPlayer;
 use ryzerbe\buildffa\player\BuildFFAPlayerManager;
 
 class EntityDamageListener implements Listener {
@@ -30,7 +31,7 @@ class EntityDamageListener implements Listener {
             }
 
             if($damager instanceof Player) {
-                $bFFAPlayer->setLastDamager($damager);
+                $bFFAPlayer->setLastTypePlayer(BuildFFAPlayer::KEY_LAST_DAMAGER, $damager);
             }
         }
 

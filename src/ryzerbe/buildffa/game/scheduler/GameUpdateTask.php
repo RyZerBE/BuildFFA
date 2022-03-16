@@ -59,6 +59,12 @@ class GameUpdateTask extends Task {
                 }
             }
         }
+
+        if(GameManager::$mapChangeTimer % 5 === 0) {
+            foreach(BuildFFAPlayerManager::getPlayers() as $bFFAPlayer) {
+                if($bFFAPlayer->needsScoreboardUpdate()) $bFFAPlayer->updateScoreboard(true);
+            }
+        }
     }
 
     /**

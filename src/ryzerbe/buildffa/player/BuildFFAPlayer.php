@@ -23,6 +23,7 @@ use ryzerbe\core\player\PMMPPlayer;
 use ryzerbe\core\player\RyZerPlayer;
 use ryzerbe\core\player\RyZerPlayerProvider;
 use ryzerbe\core\util\async\AsyncExecutor;
+use ryzerbe\core\util\cache\CacheTrait;
 use ryzerbe\core\util\ItemUtils;
 use ryzerbe\core\util\scoreboard\Scoreboard;
 use function array_filter;
@@ -33,6 +34,16 @@ use function json_encode;
 use function round;
 
 class BuildFFAPlayer {
+    use CacheTrait;
+
+    public const KEY_LAST_DAMAGER = "last_damager";
+    public const KEY_LAST_KILLER = "last_killer";
+    public const KEY_LAST_KILL = "last_kill";
+
+    public const TIME_LAST_DAMAGER = 200;
+    public const TIME_LAST_KILLER = 70;
+    public const TIME_LAST_KILL = 70;
+
     protected bool $inSafeZone = false;
 
     protected bool $sortsInventory = false;
@@ -45,12 +56,7 @@ class BuildFFAPlayer {
     protected int $kills = 0;
     protected int $killStreak = 0;
 
-    protected int|null $lastDamager = null;
-    protected int $lastDamageTick = 0;
-
     protected Scoreboard $scoreboard;
-
-    protected array $cooldowns = [];
 
     public function __construct(
         protected PMMPPlayer $player
@@ -114,18 +120,34 @@ class BuildFFAPlayer {
         return RyZerPlayerProvider::getRyzerPlayer($this->player);
     }
 
-    public function getLastDamager(): ?Player{
+    public function getLastTypePlayer(string $key, int $time): ?Player {
+        $cache = $this->getCache();
+        $lastTick = $cache->get($key."_tick", 0);
+        $last = $cache->get($key);
         if(
-            ($this->lastDamageTick + 200 < Server::getInstance()->getTick()) ||
-            $this->lastDamager === null
+            ($lastTick + $time < Server::getInstance()->getTick()) ||
+            $last === null
         ) return null;
-        $entity = Server::getInstance()->findEntity($this->lastDamager);
+        $entity = Server::getInstance()->findEntity($last);
         return ($entity instanceof Player ? $entity : null);
     }
 
-    public function setLastDamager(?Player $lastDamager): void{
-        $this->lastDamager = $lastDamager?->getId();
-        $this->lastDamageTick = Server::getInstance()->getTick();
+    public function setLastTypePlayer(string $key, ?Player $last): void {
+        $cache = $this->getCache();
+        $cache->set($key."_tick", Server::getInstance()->getTick());
+        $cache->set($key, $last?->getId());
+    }
+
+    public function hasLastTypePlayerChanged(string $key, int $time): bool {
+        $cache = $this->getCache();
+        $last = $cache->get($key."_last_value", -1);
+        $current = $this->getLastTypePlayer($key, $time)?->getId();
+
+        $cache->set($key."_last_value", $current);
+        if($last === -1) {
+            return false;
+        }
+        return $current !== $last;
     }
 
     public function isInSafeZone(): bool{
@@ -270,19 +292,23 @@ class BuildFFAPlayer {
 
     public function onDeath(): void {
         $player = $this->getPlayer();
-        $killer = $this->getLastDamager();
+        $killer = $this->getLastTypePlayer(self::KEY_LAST_DAMAGER, self::TIME_LAST_DAMAGER);
 
         $player->teleport(GameManager::getMap()->getSpawnLocation());
         $this->enterSafeZone();
 
         if($killer instanceof Player) {
-            BuildFFAPlayerManager::get($killer)?->addKill();
+            $bFFAKiller = BuildFFAPlayerManager::get($killer);
+            $this->setLastTypePlayer(self::KEY_LAST_KILLER, $killer);
+            $bFFAKiller?->setLastTypePlayer(self::KEY_LAST_KILL, $player);
+            $bFFAKiller?->addKill();
+
             $killer->playSound("random.levelup", 5.0, 1.0, [$killer]);
             $player->playSound("note.bass", 5.0, 1.0, [$player]);
             $this->deaths++;
         }
         $this->setKillStreak(0);
-        $this->setLastDamager(null);
+        $this->setLastTypePlayer(self::KEY_LAST_DAMAGER, null);
         $this->updateScoreboard();
 
         $id = $player->getId();
@@ -293,8 +319,22 @@ class BuildFFAPlayer {
         }
     }
 
-    public function updateScoreboard(): void {
+    public function needsScoreboardUpdate(): bool {
+        return (
+            $this->hasLastTypePlayerChanged(BuildFFAPlayer::KEY_LAST_KILL, self::TIME_LAST_KILL) ||
+            $this->hasLastTypePlayerChanged(BuildFFAPlayer::KEY_LAST_KILLER, self::TIME_LAST_KILLER)
+        );
+    }
+
+    public function updateScoreboard(bool $reset = false): void {
+        $kill = $this->getLastTypePlayer(self::KEY_LAST_KILL, self::TIME_LAST_KILL);
+        $killer = $this->getLastTypePlayer(self::KEY_LAST_KILLER, self::TIME_LAST_KILLER);
+
         $scoreboard = $this->scoreboard;
+        if($reset) {
+            $scoreboard->removeScoreboard();
+            $scoreboard->initScoreboard();
+        }
         $scoreboard->setLines([
             "",
             TextFormat::GRAY."○ Map",
@@ -303,11 +343,15 @@ class BuildFFAPlayer {
             TextFormat::DARK_GRAY."⇨ ".TextFormat::GREEN.GameManager::getKit()->getName(),
             "",
             TextFormat::GRAY."○ Kills",
-            TextFormat::DARK_GRAY."⇨ ".TextFormat::GREEN.$this->kills,
+            TextFormat::DARK_GRAY."⇨ ".TextFormat::GREEN.$this->kills.(
+                $kill !== null ? TextFormat::DARK_GRAY." [".TextFormat::GREEN.$kill->getName().TextFormat::DARK_GRAY."]" : ""
+            ),
             TextFormat::GRAY."○ Deaths",
-            TextFormat::DARK_GRAY."⇨ ".TextFormat::GREEN.$this->deaths,
+            TextFormat::DARK_GRAY."⇨ ".TextFormat::GREEN.$this->deaths.(
+                $killer !== null ? TextFormat::DARK_GRAY." [".TextFormat::GREEN.$killer->getName().TextFormat::DARK_GRAY."]" : ""
+            ),
             TextFormat::GRAY."○ K/D",
-            TextFormat::DARK_GRAY."⇨ ".TextFormat::GREEN.round((($this->kills <= 0 ? 1 : $this->kills) / ($this->deaths <= 0 ? 1 : $this->deaths)), 2),
+            TextFormat::DARK_GRAY."⇨ ".TextFormat::GREEN.round(($this->kills / ($this->deaths <= 0 ? 1 : $this->deaths)), 2),
         ]);
     }
 }

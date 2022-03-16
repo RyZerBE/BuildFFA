@@ -1,4 +1,4 @@
 name: BuildFFA
-version: 4.0.0-BETA
+version: 4.0.1-BETA
 api: 3.0.0
 main: ryzerbe\buildffa\BuildFFA
