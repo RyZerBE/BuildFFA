@@ -23,6 +23,9 @@ class VoteMapForm {
                 $player->playSound("note.bass", 5.0, 1.0, [$player]);
                 return;
             }
+            foreach(MapManager::getMaps() as $__map) {
+                $__map->removeVote($player);
+            }
             $map->addVote($player);
             $player->playSound("random.levelup", 5.0, 1.0, [$player]);
         });

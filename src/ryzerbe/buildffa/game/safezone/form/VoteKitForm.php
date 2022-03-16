@@ -23,6 +23,9 @@ class VoteKitForm {
                 $player->playSound("note.bass", 5.0, 1.0, [$player]);
                 return;
             }
+            foreach(KitManager::getKits() as $__kit) {
+                $__kit->removeVote($player);
+            }
             $kit->addVote($player);
             $player->playSound("random.levelup", 5.0, 1.0, [$player]);
         });
