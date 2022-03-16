@@ -6,6 +6,7 @@ namespace ryzerbe\buildffa\listener\block;
 
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\Listener;
+use pocketmine\level\Level;
 use pocketmine\level\particle\SmokeParticle;
 use ryzerbe\buildffa\game\entry\BlockBreakEntry;
 use ryzerbe\buildffa\game\GameManager;
@@ -31,6 +32,8 @@ class BlockPlaceListener implements Listener {
         if(ItemUtils::hasItemTag($item, Kit::TAG_INFINITE)) {
             $player->getInventory()->setItemInHand($item->setCount($item->getMaxStackSize()));
         }
-        GameManager::addEntry(new BlockBreakEntry($event->getBlock(), $delay));
+        $block = $event->getBlock();
+        GameManager::removeEntryById(Level::blockHash($block->getFloorX(), $block->getFloorY(), $block->getFloorZ()));
+        GameManager::addEntry(new BlockBreakEntry($block, $delay));
     }
 }
