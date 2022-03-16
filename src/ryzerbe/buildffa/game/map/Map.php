@@ -74,6 +74,7 @@ class Map implements Voteable {
             $player = $bFFAPlayer->getPlayer();
             $player->teleport($location);
             $player->setImmobile(false);
+            $bFFAPlayer->setInSafeZone(false);
             $bFFAPlayer->enterSafeZone();
         }
     }
