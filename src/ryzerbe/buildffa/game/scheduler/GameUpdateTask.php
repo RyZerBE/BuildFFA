@@ -28,13 +28,13 @@ class GameUpdateTask extends Task {
                 GameManager::resetEntries();
                 GameManager::setKit(GameManager::getTopKit());
                 GameManager::setMap(GameManager::getTopMap());
-                GameManager::$mapChangeTimer = GameManager::DEFAULT_MAP_CHANGE_DELAY;
+                GameManager::$mapChangeTimer = GameManager::DEFAULT_MAP_AND_KIT_CHANGE_DELAY;
             }
         }
 
         if(GameManager::$mapChangeTimer % 20 === 0) {
             $bossbar = GameManager::getBossbar();
-            $bossbar->setHealthPercent(GameManager::$mapChangeTimer / GameManager::DEFAULT_MAP_CHANGE_DELAY, false);
+            $bossbar->setHealthPercent(GameManager::$mapChangeTimer / GameManager::DEFAULT_MAP_AND_KIT_CHANGE_DELAY, false);
 
             $timeFormat = new TimeFormat(0, 0, 0, 0, (int)floor(GameManager::$mapChangeTimer / 1200), (int)floor((GameManager::$mapChangeTimer / 20) % 60));
             $time = (
