@@ -138,6 +138,17 @@ class GameManager {
         }
     }
 
+    public static function entryExists(int $id): bool {
+        foreach(self::$entries as $tick => $entries) {
+            foreach($entries as $key => $entry) {
+                if($entry->getId() === $id) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public static function resetEntries(): void {
         self::$entries = [];
     }
