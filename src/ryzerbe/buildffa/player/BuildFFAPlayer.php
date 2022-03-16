@@ -118,9 +118,7 @@ class BuildFFAPlayer {
         if(
             ($this->lastDamageTick + 200 < Server::getInstance()->getTick()) ||
             $this->lastDamager === null
-        ) {
-            return null;
-        }
+        ) return null;
         $entity = Server::getInstance()->findEntity($this->lastDamager);
         return ($entity instanceof Player ? $entity : null);
     }
@@ -311,27 +309,5 @@ class BuildFFAPlayer {
             TextFormat::GRAY."○ K/D",
             TextFormat::DARK_GRAY."⇨ ".TextFormat::GREEN.round((($this->kills <= 0 ? 1 : $this->kills) / ($this->deaths <= 0 ? 1 : $this->deaths)), 2),
         ]);
-    }
-
-    public function resetCooldown(string $key, int $cooldown): void {
-        $this->cooldowns[$key] = Server::getInstance()->getTick() + $cooldown;
-    }
-
-    public function hasCooldown(string $key): bool {
-        return $this->getCooldown($key) > 0;
-    }
-
-    public function getCooldown(string $key): int {
-        $this->checkCooldown();
-        return $this->cooldowns[$key] ?? 0;
-    }
-
-    private function checkCooldown(): void {
-        $tick = Server::getInstance()->getTick();
-        foreach($this->cooldowns as $key => $cooldown){
-            if($cooldown <= $tick){
-                unset($this->cooldowns[$key]);
-            }
-        }
     }
 }
