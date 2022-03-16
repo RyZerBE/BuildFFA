@@ -38,12 +38,11 @@ class RescuePlatform extends SpecialItem {
             for($x = -1; $x <= 1; $x++) {
                 for($z = -1; $z <= 1; $z++) {
                     $vector3 = $center->add($x, 0, $z);
-                    $block = $level->getBlock($vector3);
-                    if($block->getId() !== 0) {
+                    if($level->getBlock($vector3)->getId() !== 0) {
                         continue;
                     }
                     $level->setBlock($vector3, Block::get(BlockIds::STAINED_GLASS, mt_rand(0, 15)));
-                    GameManager::addEntry(new BlockBreakEntry($block, self::LIFETIME));
+                    GameManager::addEntry(new BlockBreakEntry($level->getBlock($vector3), self::LIFETIME));
                 }
             }
         }
