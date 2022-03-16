@@ -23,7 +23,7 @@ use function shuffle;
 use function var_dump;
 
 class GameManager {
-    public const DEFAULT_MAP_CHANGE_DELAY = (20 * 60) * 5;
+    public const DEFAULT_MAP_AND_KIT_CHANGE_DELAY = (20 * 60) * 8;
 
     public static int $entryId = -1;
 
@@ -36,7 +36,7 @@ class GameManager {
     protected static Bossbar $bossbar;
 
     /** In ticks  */
-    public static int $mapChangeTimer = self::DEFAULT_MAP_CHANGE_DELAY;
+    public static int $mapChangeTimer = self::DEFAULT_MAP_AND_KIT_CHANGE_DELAY;
 
     public static function init(): void {
         MapManager::init();
