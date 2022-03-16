@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace ryzerbe\buildffa\game\kit;
 
+use Exception;
 use pocketmine\block\BlockIds;
 use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\Item;
 use pocketmine\item\ItemIds;
+use pocketmine\Server;
 use ryzerbe\buildffa\game\kit\item\EnderPearl;
 use ryzerbe\buildffa\game\kit\item\RescuePlatform;
 use ryzerbe\core\util\customitem\CustomItemManager;
@@ -20,10 +22,14 @@ class KitManager {
     public static function init(): void {
         /** @var CustomItemManager $customItemManager */
         $customItemManager = CustomItemManager::getInstance();
-        $customItemManager->registerAll([
-            new EnderPearl(),
-            new RescuePlatform(),
-        ]);
+        try{
+            $customItemManager->registerAll([
+                new EnderPearl(),
+                new RescuePlatform(),
+            ]);
+        } catch(Exception $exception) {
+            Server::getInstance()->getLogger()->logException($exception);
+        }
 
         self::register(new Kit("Test", [
             "stick" => ItemUtils::addEnchantments(Item::get(ItemIds::STICK)->setCustomName("§r§6Stick"), [

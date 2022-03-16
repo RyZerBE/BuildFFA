@@ -45,7 +45,7 @@ class SetupMapSettingsItem extends CustomItem {
                 $cosOffset = $radius * cos($i);
                 $sinOffset = $radius * sin($i);
                 $level->addParticle(new RedstoneParticle($center->add($cosOffset, 0, $sinOffset), 10));
-                $level->addParticle(new RedstoneParticle($center->add($cosOffset, $sinOffset, 0), 10));
+                $level->addParticle(new RedstoneParticle($center->add($cosOffset, $sinOffset), 10));
                 $level->addParticle(new RedstoneParticle($center->add(0, $sinOffset, $cosOffset), 10));
             }
             $player->playSound("random.levelup");

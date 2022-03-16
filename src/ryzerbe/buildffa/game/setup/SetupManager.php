@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ryzerbe\buildffa\game\setup;
 
+use Exception;
+use pocketmine\Server;
 use ryzerbe\buildffa\game\setup\item\SetupMapSettingsItem;
 use ryzerbe\buildffa\game\setup\item\SetupSpawnItem;
 use ryzerbe\core\util\customitem\CustomItem;
@@ -19,8 +21,12 @@ class SetupManager {
     }
 
     public static function register(CustomItem $item): void {
-        CustomItemManager::getInstance()->registerCustomItem($item);
-        self::$items[$item->getClass()] = $item;
+        try{
+            CustomItemManager::getInstance()->registerCustomItem($item);
+            self::$items[$item->getClass()] = $item;
+        } catch(Exception $exception) {
+            Server::getInstance()->getLogger()->logException($exception);
+        }
     }
 
     public static function getItems(): array{

@@ -30,6 +30,6 @@ class SetupSpawnItem extends CustomItem {
         $settings->set(Map::KEY_SPAWN, Vector3Utils::toString($vector3));
         $settings->save();
 
-        $player->getLevel()->addParticle(new RedstoneParticle($vector3->add(0, 1, 0), 20));
+        $player->getLevel()->addParticle(new RedstoneParticle($vector3->add(0, 1), 20));
     }
 }
