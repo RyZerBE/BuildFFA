@@ -11,6 +11,7 @@ use pocketmine\item\ItemIds;
 use pocketmine\Player;
 use ryzerbe\buildffa\game\entry\BlockBreakEntry;
 use ryzerbe\buildffa\game\GameManager;
+use ryzerbe\buildffa\player\BuildFFAPlayerManager;
 use ryzerbe\core\player\PMMPPlayer;
 use function mt_rand;
 
@@ -24,7 +25,10 @@ class RescuePlatform extends SpecialItem {
     }
 
     public function onInteract(PMMPPlayer $player, Item $item): void{
-        if(!$item->equals($this->getItem(), true, false)) return;
+        if(
+            !$item->equals($this->getItem(), true, false) ||
+            BuildFFAPlayerManager::get($player)?->isInSafeZone()
+        ) return;
         $newItem = Item::get(ItemIds::DYE, 8, self::COOLDOWN);
         $newItem->setNamedTag($item->getNamedTag());
         $newItem->setCustomName($item->getName());

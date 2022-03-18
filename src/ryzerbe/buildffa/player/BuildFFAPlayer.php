@@ -352,6 +352,8 @@ class BuildFFAPlayer {
             ),
             TextFormat::GRAY."○ K/D",
             TextFormat::DARK_GRAY."⇨ ".TextFormat::GREEN.round(($this->kills / ($this->deaths <= 0 ? 1 : $this->deaths)), 2),
+            "",
+            TextFormat::AQUA."ryzer.be"
         ]);
     }
 }
