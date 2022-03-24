@@ -5,8 +5,12 @@ namespace ryzerbe\buildffa\game\perks;
 
 use pocketmine\utils\SingletonTrait;
 use pocketmine\utils\TextFormat;
+use ryzerbe\buildffa\game\perks\item\BoosterItem;
 use ryzerbe\buildffa\game\perks\item\HealStationItem;
+use ryzerbe\buildffa\game\perks\item\SwitcherItem;
+use ryzerbe\buildffa\game\perks\type\BoosterPerk;
 use ryzerbe\buildffa\game\perks\type\HealStationPerk;
+use ryzerbe\buildffa\game\perks\type\SwitcherPerk;
 
 
 class PerkManager {
@@ -25,7 +29,9 @@ class PerkManager {
 
 	public function __construct(){
 		$perks = [
-			new HealStationPerk(TextFormat::RED."2x Healstation", new HealStationItem())
+			new HealStationPerk(TextFormat::RED."2x Healstation", new HealStationItem()),
+			new SwitcherPerk(TextFormat::GOLD."1x Switcher", new SwitcherItem()),
+			new BoosterPerk(TextFormat::GREEN."1x Booster", new BoosterItem())
 		];
 
 		foreach ($perks as $perk) {

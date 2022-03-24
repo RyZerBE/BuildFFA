@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace ryzerbe\buildffa\game\safezone\item;
 
-
 use pocketmine\block\BlockIds;
 use pocketmine\item\Item;
 use pocketmine\item\ItemIds;
