@@ -6,6 +6,7 @@ namespace ryzerbe\buildffa\game\safezone;
 
 use Exception;
 use pocketmine\Server;
+use ryzerbe\buildffa\game\safezone\item\PerkItem;
 use ryzerbe\buildffa\game\safezone\item\SortInventoryItem;
 use ryzerbe\buildffa\game\safezone\item\VoteKitItem;
 use ryzerbe\buildffa\game\safezone\item\VoteMapItem;
@@ -20,6 +21,7 @@ class SafeZoneManager {
         self::register(new SortInventoryItem());
         self::register(new VoteKitItem());
         self::register(new VoteMapItem());
+        self::register(new PerkItem());
     }
 
     public static function register(CustomItem $item): void {

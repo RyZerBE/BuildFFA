@@ -17,13 +17,16 @@ use ryzerbe\buildffa\game\GameManager;
 use ryzerbe\buildffa\game\kit\Kit;
 use ryzerbe\buildffa\game\kit\KitManager;
 use ryzerbe\buildffa\game\map\MapManager;
+use ryzerbe\buildffa\game\perks\Perk;
 use ryzerbe\buildffa\game\safezone\SafeZoneManager;
 use ryzerbe\core\language\LanguageProvider;
 use ryzerbe\core\player\PMMPPlayer;
 use ryzerbe\core\player\RyZerPlayer;
 use ryzerbe\core\player\RyZerPlayerProvider;
+use ryzerbe\core\provider\CoinProvider;
 use ryzerbe\core\util\async\AsyncExecutor;
 use ryzerbe\core\util\cache\CacheTrait;
+use ryzerbe\core\util\customitem\CustomItem;
 use ryzerbe\core\util\ItemUtils;
 use ryzerbe\core\util\scoreboard\Scoreboard;
 use function array_filter;
@@ -56,13 +59,16 @@ class BuildFFAPlayer {
     protected int $kills = 0;
     protected int $killStreak = 0;
 
+    /** @var CustomItem[]  */
+    protected array $givePerks = [];
+
     protected Scoreboard $scoreboard;
 
     public function __construct(
         protected PMMPPlayer $player
     ){
         $this->load();
-        $this->scoreboard = new Scoreboard(RyZerPlayerProvider::getRyzerPlayer($this->getPlayer()), TextFormat::DARK_AQUA."BuildFFA");
+        $this->scoreboard = new Scoreboard(RyZerPlayerProvider::getRyzerPlayer($this->getPlayer()), TextFormat::RED.TextFormat::BOLD."BuildFFA");
     }
 
     public function load(): void {
@@ -210,6 +216,23 @@ class BuildFFAPlayer {
         }
     }
 
+	/**
+	 * Function getPerks
+	 * @return CustomItem[]
+	 */
+	public function getPerks(): array{
+		return $this->givePerks;
+	}
+
+	/**
+	 * Function givePerk
+	 * @param Perk $perk
+	 * @return void
+	 */
+	public function givePerk(Perk $perk){
+		$this->givePerks[] = $perk->getItem();
+	}
+
     public function enterSafeZone(): void {
         if($this->isInSafeZone()) return;
         $this->setInSafeZone(true);
@@ -229,6 +252,13 @@ class BuildFFAPlayer {
         $player->removeAllEffects();
         $this->giveKit();
         $this->updateScoreboard();
+
+        $inv = $this->getPlayer()->getInventory();
+        foreach ($this->getPerks() as $perk) {
+        	$inv->addItem($perk->getItem());
+		}
+
+        $this->givePerks = [];
     }
 
     public function sortsInventory(): bool {
@@ -288,6 +318,9 @@ class BuildFFAPlayer {
     public function setKillStreak(int $streak): void {
         $this->killStreak = $streak;
         $this->player->setXpLevel($this->killStreak);
+        if($this->killStreak % 3) {
+        	$this->player->getRyZerPlayer()->addCoins(100, false, true);
+		}
     }
 
     public function onDeath(): void {

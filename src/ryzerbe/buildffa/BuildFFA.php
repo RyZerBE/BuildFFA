@@ -13,10 +13,11 @@ use ryzerbe\buildffa\block\Beacon;
 use ryzerbe\buildffa\command\SetupCommand;
 use ryzerbe\buildffa\command\SkipCommand;
 use ryzerbe\buildffa\game\GameManager;
+use ryzerbe\buildffa\game\perks\PerkManager;
 use ryzerbe\core\util\loader\ListenerDirectoryLoader;
 
 class BuildFFA extends PluginBase {
-    public const PREFIX = TextFormat::BOLD.TextFormat::DARK_AQUA."BuildFFA ".TextFormat::RESET;
+    public const PREFIX = TextFormat::BOLD.TextFormat::RED."BuildFFA ".TextFormat::RESET;
 
     protected static BuildFFA $instance;
 
@@ -29,6 +30,7 @@ class BuildFFA extends PluginBase {
         }
 
         GameManager::init();
+        PerkManager::getInstance();
 
         Server::getInstance()->getCommandMap()->registerAll("buildffa", [
             new SetupCommand(),

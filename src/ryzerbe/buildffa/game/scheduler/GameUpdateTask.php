@@ -7,8 +7,10 @@ namespace ryzerbe\buildffa\game\scheduler;
 use pocketmine\network\mcpe\protocol\BossEventPacket;
 use pocketmine\Player;
 use pocketmine\scheduler\Task;
+use pocketmine\Server;
 use ryzerbe\buildffa\game\GameManager;
 use ryzerbe\buildffa\game\kit\item\SpecialItem;
+use ryzerbe\buildffa\game\perks\PerkManager;
 use ryzerbe\buildffa\player\BuildFFAPlayerManager;
 use ryzerbe\core\language\LanguageProvider;
 use ryzerbe\core\util\customitem\CustomItemManager;
@@ -21,6 +23,11 @@ class GameUpdateTask extends Task {
         foreach(GameManager::getEntries($currentTick) as $entry) {
             $entry->handle();
         }
+
+        foreach (PerkManager::getInstance()->getPerks() as $perk) {
+        	$perk->onUpdate($currentTick);
+		}
+
         GameManager::removeEntries($currentTick);
 
         if(count(BuildFFAPlayerManager::getPlayers()) > 0) {

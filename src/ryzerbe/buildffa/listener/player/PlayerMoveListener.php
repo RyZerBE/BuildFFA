@@ -9,9 +9,12 @@ use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerMoveEvent;
 use ryzerbe\buildffa\game\GameManager;
 use ryzerbe\buildffa\player\BuildFFAPlayerManager;
+use ryzerbe\core\player\PMMPPlayer;
+
 
 class PlayerMoveListener implements Listener {
     public function onPlayerMove(PlayerMoveEvent $event): void {
+    	/** @var PMMPPlayer $player */
         $player = $event->getPlayer();
 
         if($player->getY() <= 0) {
