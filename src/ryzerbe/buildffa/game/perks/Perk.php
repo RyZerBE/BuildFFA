@@ -3,14 +3,15 @@ declare(strict_types=1);
 namespace ryzerbe\buildffa\game\perks;
 
 
+use pocketmine\item\Item;
 use ryzerbe\core\util\customitem\CustomItem;
 use ryzerbe\core\util\customitem\CustomItemManager;
 
 
 abstract class Perk {
 
-	public function __construct(protected string $name, protected CustomItem $item){
-		CustomItemManager::getInstance()->registerCustomItem($item);
+	public function __construct(protected string $name, protected CustomItem|Item $item){
+		if($item instanceof CustomItem) CustomItemManager::getInstance()->registerCustomItem($item);
 	}
 
 	public abstract function getCost(): int;
@@ -24,7 +25,7 @@ abstract class Perk {
 		return -1;
 	}
 
-	public function getItem(): CustomItem{
+	public function getItem(): CustomItem|Item{
 		return $this->item;
 	}
 

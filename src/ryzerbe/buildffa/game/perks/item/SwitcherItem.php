@@ -3,8 +3,8 @@ declare(strict_types=1);
 namespace ryzerbe\buildffa\game\perks\item;
 
 
+use pocketmine\entity\projectile\Egg;
 use pocketmine\event\entity\ProjectileHitEntityEvent;
-use pocketmine\item\Egg;
 use pocketmine\item\Item;
 use pocketmine\item\ItemIds;
 use pocketmine\level\sound\EndermanTeleportSound;
@@ -16,6 +16,13 @@ class SwitcherItem extends CustomItem {
 
 	public function __construct(){
 		parent::__construct(Item::get(ItemIds::EGG));
+	}
+
+	public function onInteract(PMMPPlayer $player, Item $item): void{
+		if($player->hasItemCooldown($item)) return;
+
+		$player->resetItemCooldown($item, 10);
+		$player->getInventory()->removeItem(Item::get(ItemIds::EGG));
 	}
 
 	public function onEntityHit(ProjectileHitEntityEvent $event){
@@ -31,5 +38,9 @@ class SwitcherItem extends CustomItem {
 			$owner->getLevel()->addSound(new EndermanTeleportSound($owner->asVector3()), [$owner]);
 			$owner->getLevel()->addSound(new EndermanTeleportSound($hitEntity->asVector3()), [$hitEntity]);
 		}
+	}
+
+	public function cancelInteract(): bool{
+		return false;
 	}
 }

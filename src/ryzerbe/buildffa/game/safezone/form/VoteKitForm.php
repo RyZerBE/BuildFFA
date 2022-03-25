@@ -30,8 +30,9 @@ class VoteKitForm {
             $player->playSound("random.levelup", 5.0, 1.0, [$player]);
         });
         foreach(KitManager::getKits() as $kit) {
-            $form->addButton(($kit->hasVoted($player) ? TextFormat::GREEN : TextFormat::DARK_GRAY)."⇨ ".TextFormat::GREEN.$kit->getName()."\n§r§7§o".$kit->getVotes()." Votes", $kit->imageType, $kit->image, $kit->getName());
+            $form->addButton(($kit->hasVoted($player) ? TextFormat::WHITE : TextFormat::DARK_GRAY)."⇨ ".TextFormat::DARK_GREEN.$kit->getName()."\n§r§7§o".$kit->getVotes()." Votes", $kit->imageType, $kit->image, $kit->getName());
         }
-        $form->sendToPlayer($player);
+		$form->setTitle(TextFormat::GOLD.TextFormat::BOLD."Kits");
+		$form->sendToPlayer($player);
     }
 }

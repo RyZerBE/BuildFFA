@@ -38,6 +38,7 @@ class PerkForm{
 		foreach(PerkManager::getInstance()->getPerks() as $perk) {
 			$form->addButton($perk->getName()."\n".TextFormat::GRAY."⇨ ".TextFormat::WHITE.$perk->getCost().TextFormat::GOLD." Coins", $perk->getImageType(), $perk->getImagePath(), $perk->getName());
 		}
+		$form->setTitle(TextFormat::DARK_PURPLE.TextFormat::BOLD."Perks");
 		$form->sendToPlayer($player);
 	}
 }

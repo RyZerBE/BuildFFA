@@ -15,6 +15,8 @@ use ryzerbe\buildffa\command\SkipCommand;
 use ryzerbe\buildffa\game\GameManager;
 use ryzerbe\buildffa\game\perks\PerkManager;
 use ryzerbe\core\util\loader\ListenerDirectoryLoader;
+use ryzerbe\statssystem\provider\StatsAsyncProvider;
+
 
 class BuildFFA extends PluginBase {
     public const PREFIX = TextFormat::BOLD.TextFormat::RED."BuildFFA ".TextFormat::RESET;
@@ -38,6 +40,16 @@ class BuildFFA extends PluginBase {
         ]);
 
         BlockFactory::registerBlock(new Beacon(), true);
+        StatsAsyncProvider::createCategory("BuildFFA", [
+        	"kills" => "INT",
+			"deaths" => "INT",
+			"elo" => "INT"
+		],
+		[
+			"kills" => 0,
+			"deaths" => 0,
+			"elo" => 1000
+		]);
     }
 
     public static function getInstance(): BuildFFA{

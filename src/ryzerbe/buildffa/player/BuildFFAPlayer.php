@@ -29,6 +29,9 @@ use ryzerbe\core\util\cache\CacheTrait;
 use ryzerbe\core\util\customitem\CustomItem;
 use ryzerbe\core\util\ItemUtils;
 use ryzerbe\core\util\scoreboard\Scoreboard;
+use ryzerbe\statssystem\provider\StatsAsyncProvider;
+use ryzerbe\statssystem\provider\StatsProvider;
+
 use function array_filter;
 use function count;
 use function intval;
@@ -57,9 +60,10 @@ class BuildFFAPlayer {
 
     protected int $deaths = 0;
     protected int $kills = 0;
+    protected int $elo = 1000;
     protected int $killStreak = 0;
 
-    /** @var CustomItem[]  */
+    /** @var CustomItem[]|Item[]  */
     protected array $givePerks = [];
 
     protected Scoreboard $scoreboard;
@@ -116,6 +120,15 @@ class BuildFFAPlayer {
                 }
             }
         });
+
+        $kills = $this->kills;
+        $deaths = $this->deaths;
+        $elo = $this->elo;
+        AsyncExecutor::submitMySQLAsyncTask("Statistics", function (mysqli $mysqli) use ($playername, $kills, $deaths, $elo): void{
+        	StatsProvider::appendStatistic($mysqli, $playername, "BuildFFA", "kills", $kills);
+        	StatsProvider::appendStatistic($mysqli, $playername, "BuildFFA", "deaths", $deaths);
+        	StatsProvider::updateStatistic($mysqli, $playername, "BuildFFA", "elo", $elo);
+		});
     }
 
     public function getPlayer(): Player{
@@ -217,8 +230,8 @@ class BuildFFAPlayer {
     }
 
 	/**
-	 * Function getPerks
-	 * @return CustomItem[]
+	 * Function getGivePerks
+	 * @return array
 	 */
 	public function getPerks(): array{
 		return $this->givePerks;
@@ -255,7 +268,8 @@ class BuildFFAPlayer {
 
         $inv = $this->getPlayer()->getInventory();
         foreach ($this->getPerks() as $perk) {
-        	$inv->addItem($perk->getItem());
+        	if($perk instanceof CustomItem) $inv->addItem($perk->getItem());
+        	else if($perk instanceof Item) $inv->addItem($perk);
 		}
 
         $this->givePerks = [];
@@ -318,7 +332,7 @@ class BuildFFAPlayer {
     public function setKillStreak(int $streak): void {
         $this->killStreak = $streak;
         $this->player->setXpLevel($this->killStreak);
-        if($this->killStreak % 3) {
+        if($this->killStreak % 3 && $this->killStreak != 0) {
         	$this->player->getRyZerPlayer()->addCoins(100, false, true);
 		}
     }
@@ -331,6 +345,7 @@ class BuildFFAPlayer {
         $this->enterSafeZone();
 
         if($killer instanceof Player) {
+        	if($killer->getName() === $this->getPlayer()->getName()) return;
             $bFFAKiller = BuildFFAPlayerManager::get($killer);
             $this->setLastTypePlayer(self::KEY_LAST_KILLER, $killer);
             $bFFAKiller?->setLastTypePlayer(self::KEY_LAST_KILL, $player);
@@ -339,6 +354,15 @@ class BuildFFAPlayer {
             $killer->playSound("random.levelup", 5.0, 1.0, [$killer]);
             $player->playSound("note.bass", 5.0, 1.0, [$player]);
             $this->deaths++;
+
+            $elo = floor(((1) / (1 + (pow(10, ($bFFAKiller->getElo() - $this->getElo()) / 400)))) * 30);
+            if($elo > 50) $elo = 50;
+            else if($elo < 5) $elo = 5;
+
+            $this->subtractElo((int) $elo);
+            $bFFAKiller->addElo((int)$elo);
+            $bFFAKiller->getPlayer()->sendMessage(TextFormat::DARK_GRAY."[".TextFormat::BLUE."ELO".TextFormat::DARK_GRAY."] ".TextFormat::GREEN."+ ".$elo);
+            $this->getPlayer()->sendMessage(TextFormat::DARK_GRAY."[".TextFormat::BLUE."ELO".TextFormat::DARK_GRAY."] ".TextFormat::RED."- ".$elo);
         }
         $this->setKillStreak(0);
         $this->setLastTypePlayer(self::KEY_LAST_DAMAGER, null);
@@ -371,22 +395,42 @@ class BuildFFAPlayer {
         $scoreboard->setLines([
             "",
             TextFormat::GRAY."○ Map",
-            TextFormat::DARK_GRAY."⇨ ".TextFormat::GREEN.GameManager::getMap()->getName(),
+            TextFormat::DARK_GRAY."⇨ ".TextFormat::WHITE.GameManager::getMap()->getName(),
             TextFormat::GRAY."○ Kit",
-            TextFormat::DARK_GRAY."⇨ ".TextFormat::GREEN.GameManager::getKit()->getName(),
+            TextFormat::DARK_GRAY."⇨ ".TextFormat::WHITE.GameManager::getKit()->getName(),
             "",
             TextFormat::GRAY."○ Kills",
-            TextFormat::DARK_GRAY."⇨ ".TextFormat::GREEN.$this->kills.(
+            TextFormat::DARK_GRAY."⇨ ".TextFormat::WHITE.$this->kills.(
                 $kill !== null ? TextFormat::DARK_GRAY." [".TextFormat::GREEN.$kill->getName().TextFormat::DARK_GRAY."]" : ""
             ),
             TextFormat::GRAY."○ Deaths",
-            TextFormat::DARK_GRAY."⇨ ".TextFormat::GREEN.$this->deaths.(
+            TextFormat::DARK_GRAY."⇨ ".TextFormat::WHITE.$this->deaths.(
                 $killer !== null ? TextFormat::DARK_GRAY." [".TextFormat::GREEN.$killer->getName().TextFormat::DARK_GRAY."]" : ""
             ),
             TextFormat::GRAY."○ K/D",
-            TextFormat::DARK_GRAY."⇨ ".TextFormat::GREEN.round(($this->kills / ($this->deaths <= 0 ? 1 : $this->deaths)), 2),
+            TextFormat::DARK_GRAY."⇨ ".TextFormat::WHITE.$this->getKD(),
             "",
             TextFormat::AQUA."ryzer.be"
         ]);
     }
+
+    public function getKD(): float{
+		return round(($this->kills / ($this->deaths <= 0 ? 1 : $this->deaths)), 2);
+	}
+
+	/**
+	 * Function getElo
+	 * @return int
+	 */
+	public function getElo(): int{
+		return $this->elo;
+	}
+
+	public function subtractElo(int $elo){
+		$this->elo -= $elo;
+	}
+
+	public function addElo(int $elo){
+		$this->elo += $elo;
+	}
 }

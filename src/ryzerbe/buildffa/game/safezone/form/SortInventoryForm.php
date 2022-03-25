@@ -27,8 +27,9 @@ class SortInventoryForm {
             $bFFAPlayer->sortInventory($kit);
         });
         foreach(KitManager::getKits() as $kit) {
-            $form->addButton(TextFormat::DARK_GRAY."⇨".TextFormat::GREEN." ".$kit->getName(), $kit->imageType, $kit->image, $kit->getName());
+            $form->addButton(TextFormat::WHITE."⇨".TextFormat::DARK_GREEN." ".$kit->getName(), $kit->imageType, $kit->image, $kit->getName());
         }
+        $form->setTitle(TextFormat::GOLD.TextFormat::BOLD."Sort inventory");
         $form->sendToPlayer($player);
     }
 }

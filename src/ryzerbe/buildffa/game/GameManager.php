@@ -35,7 +35,7 @@ class GameManager {
 
     protected static Bossbar $bossbar;
 
-    /** In ticks  */
+	/** In ticks  */
     public static int $mapChangeTimer = self::DEFAULT_MAP_AND_KIT_CHANGE_DELAY;
 
     public static function init(): void {

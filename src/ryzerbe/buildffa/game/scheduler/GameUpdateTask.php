@@ -8,6 +8,7 @@ use pocketmine\network\mcpe\protocol\BossEventPacket;
 use pocketmine\Player;
 use pocketmine\scheduler\Task;
 use pocketmine\Server;
+use pocketmine\utils\TextFormat;
 use ryzerbe\buildffa\game\GameManager;
 use ryzerbe\buildffa\game\kit\item\SpecialItem;
 use ryzerbe\buildffa\game\perks\PerkManager;
@@ -49,11 +50,19 @@ class GameUpdateTask extends Task {
                 ($timeFormat->getSeconds() <= 9 ? "0" : "").$timeFormat->getSeconds()
             );
 
+            $bestKd = 0;
+            $bestKdPlayer = "???";
             foreach(BuildFFAPlayerManager::getPlayers() as $bFFAPlayer) {
-                $player = $bFFAPlayer->getPlayer();
+            	$kd = $bFFAPlayer->getKD();
+                if($kd > $bestKd) {
+					$bestKd = $kd;
+					$bestKdPlayer = $bFFAPlayer->getRyZerPlayer()->getName(true);
+                }
+            	$player = $bFFAPlayer->getPlayer();
                 $bossbar->setTitle(LanguageProvider::getMessageContainer("buildffa-bossbar-next-map-and-kit-change", $player, [
                     "#time" => $time
                 ]), false);
+
                 $this->sendBossEventPacket($player, BossEventPacket::TYPE_HEALTH_PERCENT);
                 $this->sendBossEventPacket($player, BossEventPacket::TYPE_TITLE);
                 $this->sendBossEventPacket($player, BossEventPacket::TYPE_TEXTURE);
@@ -65,6 +74,9 @@ class GameUpdateTask extends Task {
                     }
                 }
             }
+            foreach (BuildFFAPlayerManager::getPlayers() as $bFFAPlayer) {
+            	$bFFAPlayer->getPlayer()->sendActionBarMessage(TextFormat::GRAY."Best ".TextFormat::RED."K/D: ".TextFormat::WHITE.$bestKdPlayer.TextFormat::RESET.TextFormat::GRAY." (".TextFormat::RED.$bestKd.TextFormat::GRAY.")");
+			}
         }
 
         if(GameManager::$mapChangeTimer % 5 === 0) {

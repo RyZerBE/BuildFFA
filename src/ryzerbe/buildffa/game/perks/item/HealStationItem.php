@@ -6,9 +6,10 @@ namespace ryzerbe\buildffa\game\perks\item;
 use pocketmine\block\BlockIds;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\item\Item;
+use pocketmine\level\Level;
 use ryzerbe\buildffa\game\perks\type\HealStationPerk;
 use ryzerbe\core\util\customitem\CustomItem;
-use ryzerbe\core\util\Vector3Utils;
+use ryzerbe\core\util\customitem\CustomItemManager;
 
 
 class HealStationItem extends CustomItem {
@@ -25,9 +26,16 @@ class HealStationItem extends CustomItem {
 	 */
 	public function onPlace(BlockPlaceEvent $event){
 		if($event->isCancelled()) return;
+		$customItem = CustomItemManager::getInstance()->getCustomItemByItem($event->getItem());
+		if($customItem === null) return;
 
 		$block = $event->getBlock();
 		$player = $event->getPlayer();
-		HealStationPerk::$placedStations[Vector3Utils::toString($block->asVector3())] = $player->getName();
+		HealStationPerk::$placedStations[Level::blockHash($block->getFloorX(), $block->getFloorY(), $block->getFloorZ())] = $player->getName();
+		var_dump(HealStationPerk::$placedStations[Level::blockHash($block->getFloorX(), $block->getFloorY(), $block->getFloorZ())] ?? null);
+	}
+
+	public function cancelInteract(): bool{
+		return false;
 	}
 }
