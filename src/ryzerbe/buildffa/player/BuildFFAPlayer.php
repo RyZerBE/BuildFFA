@@ -78,8 +78,10 @@ class BuildFFAPlayer {
     public function load(): void {
         $playername = $this->player->getName();
         $player = $this->player;
-        StatsAsyncProvider::getStatistics($playername, "BuildFFA", function (array $stats) use ($player): void{
+        StatsAsyncProvider::getStatistics($playername, "BuildFFA", function (?array $stats) use ($player): void{
         	if(!$player->isConnected()) return;
+        	if($stats === null) return;
+
         	$bffaPlayer = BuildFFAPlayerManager::get($player);
         	$bffaPlayer->elo = (int)$stats["elo"] ?? 1001;
 		});
