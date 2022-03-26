@@ -15,6 +15,7 @@ use ryzerbe\buildffa\game\perks\PerkManager;
 use ryzerbe\buildffa\player\BuildFFAPlayerManager;
 use ryzerbe\core\language\LanguageProvider;
 use ryzerbe\core\util\customitem\CustomItemManager;
+use ryzerbe\core\util\TextUtils;
 use ryzerbe\core\util\time\TimeFormat;
 use function count;
 use function floor;
@@ -75,7 +76,8 @@ class GameUpdateTask extends Task {
                 }
             }
             foreach (BuildFFAPlayerManager::getPlayers() as $bFFAPlayer) {
-            	$bFFAPlayer->getPlayer()->sendActionBarMessage(TextFormat::GRAY."Best ".TextFormat::RED."K/D: ".TextFormat::WHITE.$bestKdPlayer.TextFormat::RESET.TextFormat::GRAY." (".TextFormat::RED.$bestKd.TextFormat::GRAY.")");
+            	$bFFAPlayer->getPlayer()->sendActionBarMessage(TextUtils::formatEol(TextFormat::GRAY."Best ".TextFormat::RED."K/D: ".TextFormat::WHITE.$bestKdPlayer.TextFormat::RESET.TextFormat::GRAY." (".TextFormat::RED.$bestKd.TextFormat::GRAY.")"
+					."\n".TextFormat::GRAY."Your ".TextFormat::RED."K/D: ".TextFormat::WHITE.$bFFAPlayer->getKD()));
 			}
         }
 

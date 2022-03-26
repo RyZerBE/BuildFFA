@@ -77,6 +77,12 @@ class BuildFFAPlayer {
 
     public function load(): void {
         $playername = $this->player->getName();
+        $player = $this->player;
+        StatsAsyncProvider::getStatistics($playername, "BuildFFA", function (array $stats) use ($player): void{
+        	if(!$player->isConnected()) return;
+        	$bffaPlayer = BuildFFAPlayerManager::get($player);
+        	$bffaPlayer->elo = (int)$stats["elo"] ?? 1001;
+		});
         AsyncExecutor::submitMySQLAsyncTask("BuildFFA", function(mysqli $mysqli) use ($playername): array {
             $items = [];
             $query = $mysqli->query("SELECT * FROM inventory_sort WHERE playername='$playername'");
@@ -332,8 +338,8 @@ class BuildFFAPlayer {
     public function setKillStreak(int $streak): void {
         $this->killStreak = $streak;
         $this->player->setXpLevel($this->killStreak);
-        if($this->killStreak % 3 && $this->killStreak != 0) {
-        	$this->player->getRyZerPlayer()->addCoins(100, false, true);
+        if($this->killStreak % 3 && $this->killStreak > 0) {
+        	$this->player->getRyZerPlayer()->addCoins(75, false, true);
 		}
     }
 
@@ -350,6 +356,7 @@ class BuildFFAPlayer {
             $this->setLastTypePlayer(self::KEY_LAST_KILLER, $killer);
             $bFFAKiller?->setLastTypePlayer(self::KEY_LAST_KILL, $player);
             $bFFAKiller?->addKill();
+            $killer->setHealth($killer->getMaxHealth());
 
             $killer->playSound("random.levelup", 5.0, 1.0, [$killer]);
             $player->playSound("note.bass", 5.0, 1.0, [$player]);
@@ -407,8 +414,8 @@ class BuildFFAPlayer {
             TextFormat::DARK_GRAY."⇨ ".TextFormat::WHITE.$this->deaths.(
                 $killer !== null ? TextFormat::DARK_GRAY." [".TextFormat::GREEN.$killer->getName().TextFormat::DARK_GRAY."]" : ""
             ),
-            TextFormat::GRAY."○ K/D",
-            TextFormat::DARK_GRAY."⇨ ".TextFormat::WHITE.$this->getKD(),
+            TextFormat::GRAY."○ Elo",
+            TextFormat::DARK_GRAY."⇨ ".TextFormat::WHITE.$this->getElo(),
             "",
             TextFormat::AQUA."ryzer.be"
         ]);
