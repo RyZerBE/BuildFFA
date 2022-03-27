@@ -12,6 +12,7 @@ use pocketmine\item\ItemIds;
 use pocketmine\Server;
 use ryzerbe\buildffa\game\kit\item\EnderPearl;
 use ryzerbe\buildffa\game\kit\item\RescuePlatform;
+use ryzerbe\buildffa\game\kit\item\Snowball;
 use ryzerbe\core\util\customitem\CustomItemManager;
 use ryzerbe\core\util\ItemUtils;
 
@@ -26,6 +27,7 @@ class KitManager {
             $customItemManager->registerAll([
                 new EnderPearl(),
                 new RescuePlatform(),
+				new Snowball()
             ]);
         } catch(Exception $exception) {
             Server::getInstance()->getLogger()->logException($exception);
@@ -125,7 +127,7 @@ class KitManager {
             "sword" => ItemUtils::addEnchantments(Item::get(ItemIds::GOLD_SWORD)->setCustomName("§r§6Stick"), [
                 Enchantment::SHARPNESS => 1
             ]),
-            "snowballs" => Item::get(ItemIds::SNOWBALL, 0, 8),
+            "snowballs" => $customItemManager->getCustomItemByClass(Snowball::class)->getItem(),
             "pickaxe" => ItemUtils::addEnchantments(Item::get(ItemIds::IRON_PICKAXE)->setCustomName("§r§6Pickaxe"), [
                 Enchantment::EFFICIENCY => 2
             ]),
