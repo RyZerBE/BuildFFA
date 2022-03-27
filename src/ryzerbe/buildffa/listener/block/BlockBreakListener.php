@@ -13,6 +13,7 @@ use ryzerbe\buildffa\game\entry\BlockPlaceEntry;
 use ryzerbe\buildffa\game\GameManager;
 
 class BlockBreakListener implements Listener {
+
     public function onBlockBreak(BlockBreakEvent $event): void {
         $player = $event->getPlayer();
 		$block = $event->getBlock();
@@ -26,8 +27,11 @@ class BlockBreakListener implements Listener {
         }
         $event->setDrops([]);
         $event->setXpDropAmount(0);
-
-        GameManager::removeEntryById(Level::blockHash($block->getFloorX(), $block->getFloorY(), $block->getFloorZ()));
-        GameManager::addEntry(new BlockPlaceEntry($block));
+		if(GameManager::entryExists(Level::blockHash($block->getFloorX(), $block->getFloorY(), $block->getFloorZ()))) {
+			GameManager::removeEntryById(Level::blockHash($block->getFloorX(), $block->getFloorY(), $block->getFloorZ()));
+			return;
+		}
+		GameManager::addEntry(new BlockPlaceEntry($block));
+		GameManager::removeEntryById(Level::blockHash($block->getFloorX(), $block->getFloorY(), $block->getFloorZ()));
     }
 }
