@@ -27,7 +27,8 @@ class BlockBreakListener implements Listener {
         }
         $event->setDrops([]);
         $event->setXpDropAmount(0);
-		if(GameManager::entryExists(Level::blockHash($block->getFloorX(), $block->getFloorY(), $block->getFloorZ()))) {
+		if($entry = GameManager::entryExists(Level::blockHash($block->getFloorX(), $block->getFloorY(), $block->getFloorZ()), true)) {
+			if($entry instanceof BlockPlaceEntry) return;
 			GameManager::removeEntryById(Level::blockHash($block->getFloorX(), $block->getFloorY(), $block->getFloorZ()));
 			return;
 		}

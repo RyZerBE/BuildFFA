@@ -137,10 +137,12 @@ class GameManager {
         }
     }
 
-    public static function entryExists(int $id): bool {
+    public static function entryExists(int $id, bool $returnEntry = false): Entry|bool {
         foreach(self::$entries as $tick => $entries) {
             foreach($entries as $key => $entry) {
                 if($entry->getId() === $id) {
+                	if($returnEntry) return $entry;
+
                     return true;
                 }
             }
