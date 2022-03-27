@@ -147,6 +147,12 @@ class BuildFFAPlayer {
         return RyZerPlayerProvider::getRyzerPlayer($this->player);
     }
 
+	/**
+	 * Function getLastTypePlayer
+	 * @param string $key
+	 * @param int $time
+	 * @return null|PMMPPlayer
+	 */
     public function getLastTypePlayer(string $key, int $time): ?Player {
         $cache = $this->getCache();
         $lastTick = $cache->get($key."_tick", 0);
@@ -340,7 +346,7 @@ class BuildFFAPlayer {
     public function setKillStreak(int $streak): void {
         $this->killStreak = $streak;
         $this->player->setXpLevel($this->killStreak);
-        if($this->killStreak % 3 && $this->killStreak > 0) {
+        if($this->killStreak % 3 && $this->killStreak > 1) {
         	$this->player->getRyZerPlayer()->addCoins(75, false, true);
 		}
     }
@@ -410,11 +416,11 @@ class BuildFFAPlayer {
             "",
             TextFormat::GRAY."○ Kills",
             TextFormat::DARK_GRAY."⇨ ".TextFormat::WHITE.$this->kills.(
-                $kill !== null ? TextFormat::DARK_GRAY." [".TextFormat::GREEN.$kill->getName().TextFormat::DARK_GRAY."]" : ""
+                $kill !== null ? TextFormat::DARK_GRAY." [".TextFormat::GREEN.$kill->getRyZerPlayer()->getName(true).TextFormat::DARK_GRAY."]" : ""
             ),
             TextFormat::GRAY."○ Deaths",
             TextFormat::DARK_GRAY."⇨ ".TextFormat::WHITE.$this->deaths.(
-                $killer !== null ? TextFormat::DARK_GRAY." [".TextFormat::GREEN.$killer->getName().TextFormat::DARK_GRAY."]" : ""
+                $killer !== null ? TextFormat::DARK_GRAY." [".TextFormat::GREEN.$killer->getRyZerPlayer()->getName(true).TextFormat::DARK_GRAY."]" : ""
             ),
             TextFormat::GRAY."○ Elo",
             TextFormat::DARK_GRAY."⇨ ".TextFormat::WHITE.$this->getElo(),

@@ -33,7 +33,9 @@ class BlockPlaceListener implements Listener {
             $player->getInventory()->setItemInHand($item->setCount($item->getMaxStackSize()));
         }
         $block = $event->getBlock();
-        if(GameManager::entryExists(Level::blockHash($block->getFloorX(), $block->getFloorY(), $block->getFloorZ()))) return;
+        if(GameManager::entryExists(Level::blockHash($block->getFloorX(), $block->getFloorY(), $block->getFloorZ()))) {
+        	return;
+		}
         GameManager::addEntry(new BlockBreakEntry($block, $delay));
     }
 }

@@ -32,6 +32,5 @@ class BlockBreakListener implements Listener {
 			return;
 		}
 		GameManager::addEntry(new BlockPlaceEntry($block));
-		GameManager::removeEntryById(Level::blockHash($block->getFloorX(), $block->getFloorY(), $block->getFloorZ()));
     }
 }

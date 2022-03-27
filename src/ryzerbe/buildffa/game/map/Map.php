@@ -6,6 +6,7 @@ namespace ryzerbe\buildffa\game\map;
 
 use pocketmine\entity\Effect;
 use pocketmine\entity\EffectInstance;
+use pocketmine\level\Level;
 use pocketmine\level\Location;
 use pocketmine\math\Vector3;
 use pocketmine\Server;
@@ -67,6 +68,7 @@ class Map implements Voteable {
         $level = $server->getLevelByName($this->getFolderName());
         $level->stopTime();
         $level->setTime(1000);
+        $level->setDifficulty(Level::DIFFICULTY_NORMAL);
         $level->setAutoSave(false);
 
         $location = $this->getSpawnLocation();

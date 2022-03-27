@@ -46,6 +46,7 @@ class KitManager {
             "block_1" => ItemUtils::addItemTags(Item::get(BlockIds::SANDSTONE, 0, 64), [
                 Kit::TAG_INFINITE => "1"
             ]),
+			"web" => Item::get(BlockIds::WEB, 0, 3),
 
             "enderpearl" => $customItemManager->getCustomItemByClass(EnderPearl::class)->getItem(),
             "rescue_platform" => $customItemManager->getCustomItemByClass(RescuePlatform::class)->getItem(),
@@ -75,8 +76,10 @@ class KitManager {
             "block_1" => ItemUtils::addItemTags(Item::get(BlockIds::SANDSTONE, 0, 64), [
                 Kit::TAG_INFINITE => "1"
             ]),
+			"web" => Item::get(BlockIds::WEB, 0, 3),
 
-            "enderpearl" => $customItemManager->getCustomItemByClass(EnderPearl::class)->getItem(),
+
+			"enderpearl" => $customItemManager->getCustomItemByClass(EnderPearl::class)->getItem(),
             "rescue_platform" => $customItemManager->getCustomItemByClass(RescuePlatform::class)->getItem(),
 
             "helmet" => ItemUtils::addEnchantments(Item::get(ItemIds::LEATHER_HELMET)->setCustomName("§r§6Helmet"), [
@@ -105,8 +108,10 @@ class KitManager {
             "block_1" => ItemUtils::addItemTags(Item::get(BlockIds::SANDSTONE, 0, 64), [
                 Kit::TAG_INFINITE => "1"
             ]),
+			"web" => Item::get(BlockIds::WEB, 0, 3),
 
-            "enderpearl" => $customItemManager->getCustomItemByClass(EnderPearl::class)->getItem(),
+
+			"enderpearl" => $customItemManager->getCustomItemByClass(EnderPearl::class)->getItem(),
             "rescue_platform" => $customItemManager->getCustomItemByClass(RescuePlatform::class)->getItem(),
 
             "helmet" => ItemUtils::addEnchantments(Item::get(ItemIds::LEATHER_HELMET)->setCustomName("§r§6Helmet"), [
