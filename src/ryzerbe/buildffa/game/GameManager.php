@@ -108,7 +108,6 @@ class GameManager {
         $kits = array_flip($kits);
         $kit = KitManager::getKit(($array_shift = array_shift($kits)) ?? "");
         if($kit === null) {
-            var_dump($array_shift);
             $kits = KitManager::getKits();
             $kit = array_shift($kits);
         }
